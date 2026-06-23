@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0A0A0A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Neural Brain">
+<title>NEURAL BRAIN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
+<style>
+:root {
+  --bg-deep: #0A0A0A;
+  --bg-card: #111111;
+  --bg-elevated: #181818;
+  --bg-input: #141414;
+  --gold: #FFD700;
+  --gold-dim: rgba(255,215,0,0.15);
+  --crimson: #DC143C;
+  --crimson-dim: rgba(220,20,60,0.15);
+  --bone: #F5F0E8;
+  --bone-dim: rgba(245,240,232,0.6);
+  --gray-dark: #1A1A1A;
+  --gray-mid: #2A2A2A;
+  --gray-light: #3A3A3A;
+  --text-primary: #F5F0E8;
+  --text-secondary: rgba(245,240,232,0.6);
+  --text-muted: rgba(245,240,232,0.35);
+  --border: rgba(245,240,232,0.08);
+  --border-active: rgba(245,240,232,0.2);
+  --accent: var(--gold);
+  --accent-dim: var(--gold-dim);
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --nav-h: 72px;
+  --top-h: 60px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior:smooth; }
+body {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width:3px; height:3px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--gray-mid); border-radius:99px; }
+
+/* UTILITY */
+.hidden { display:none !important; }
+.flex { display:flex; }
+.col { flex-direction:column; }
+.gap-4 { gap:4px; }
+.gap-8 { gap:8px; }
+.gap-12 { gap:12px; }
+.gap-16 { gap:16px; }
+.items-center { align-items:center; }
+.justify-between { justify-content:space-between; }
+.w-full { width:100%; }
+.text-sm { font-size:13px; }
+.text-xs { font-size:11px; }
+.text-gold { color:var(--gold); }
+.text-muted { color:var(--text-muted); }
+.text-secondary { color:var(--text-secondary); }
+.font-600 { font-weight:600; }
+.font-700 { font-weight:700; }
+.font-800 { font-weight:800; }
+.truncate { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+
+/* LAYOUT */
+#app { display:flex; flex-direction:column; min-height:100dvh; }
+#topbar {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  height:calc(var(--top-h) + var(--safe-top));
+  padding-top:var(--safe-top);
+  background:rgba(10,10,10,0.9);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; padding-inline:16px;
+  gap:12px;
+}
+#topbar-left { display:flex; align-items:center; gap:10px; flex:1; min-width:0; }
+#topbar-logo { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:17px; letter-spacing:-0.5px; color:var(--text-primary); white-space:nowrap; }
+#topbar-logo span { color:var(--accent); }
+#topbar-brain-name { font-size:13px; color:var(--text-muted); truncate }
+#topbar-right { display:flex; align-items:center; gap:8px; }
+#user-avatar {
+  width:32px; height:32px; border-radius:50%;
+  border:1.5px solid var(--accent);
+  object-fit:cover; cursor:pointer;
+  background:var(--gray-dark);
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; font-weight:700; color:var(--accent);
+  overflow:hidden;
+}
+#user-avatar img { width:100%; height:100%; object-fit:cover; }
+
+#main-content {
+  flex:1;
+  padding-top:calc(var(--top-h) + var(--safe-top));
+  padding-bottom:calc(var(--nav-h) + var(--safe-bottom) + 8px);
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* BOTTOM NAV */
+#bottom-nav {
+  position:fixed; bottom:0; left:0; right:0; z-index:100;
+  height:calc(var(--nav-h) + var(--safe-bottom));
+  padding-bottom:var(--safe-bottom);
+  background:rgba(10,10,10,0.95);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex; align-items:center;
+}
+#nav-brains { display:flex; align-items:center; flex:1; overflow-x:auto; padding:0 8px; gap:4px; scrollbar-width:none; }
+#nav-brains::-webkit-scrollbar { display:none; }
+.nav-item {
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  min-width:64px; padding:8px 4px 4px;
+  border:none; background:transparent; cursor:pointer;
+  color:var(--text-muted); transition:color var(--transition);
+  border-radius:var(--radius-md);
+  position:relative;
+}
+.nav-item.active { color:var(--accent); }
+.nav-item .nav-icon { font-size:22px; }
+.nav-item .nav-label { font-size:10px; font-weight:500; letter-spacing:0.3px; white-space:nowrap; }
+.nav-item::after {
+  content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+  width:0; height:2px; background:var(--accent); border-radius:2px;
+  transition:width var(--transition);
+}
+.nav-item.active::after { width:24px; }
+#nav-add {
+  min-width:48px; height:48px; border-radius:50%;
+  background:var(--accent); border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  margin:0 8px; flex-shrink:0;
+  box-shadow:0 4px 20px rgba(255,215,0,0.3);
+  transition:transform var(--transition), box-shadow var(--transition);
+  color:#0A0A0A;
+}
+#nav-add:active { transform:scale(0.92); }
+#nav-add .material-icons-round { font-size:26px; }
+
+/* SCREENS */
+.screen { display:none; flex-direction:column; }
+.screen.active { display:flex; }
+
+/* SECTIONS */
+.section { padding:16px; }
+.section + .section { padding-top:0; }
+
+/* CARDS */
+.card {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:16px;
+  transition:border-color var(--transition);
+}
+.card:active { border-color:var(--border-active); }
+
+/* BUTTONS */
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  border:none; cursor:pointer; font-family:inherit; font-weight:600;
+  border-radius:var(--radius-md); padding:12px 18px; font-size:14px;
+  transition:all var(--transition); white-space:nowrap;
+}
+.btn-primary { background:var(--accent); color:#0A0A0A; }
+.btn-primary:active { opacity:0.85; transform:scale(0.97); }
+.btn-ghost { background:transparent; color:var(--text-secondary); border:1px solid var(--border); }
+.btn-ghost:active { background:var(--gray-dark); }
+.btn-danger { background:var(--crimson-dim); color:var(--crimson); border:1px solid rgba(220,20,60,0.3); }
+.btn-danger:active { opacity:0.8; }
+.btn-sm { padding:8px 14px; font-size:13px; }
+.btn-icon { padding:10px; border-radius:50%; aspect-ratio:1; }
+.btn-icon .material-icons-round { font-size:20px; }
+
+/* INPUT */
+.input-group { display:flex; flex-direction:column; gap:6px; }
+.input-label { font-size:12px; font-weight:600; color:var(--text-muted); letter-spacing:0.5px; text-transform:uppercase; }
+.input {
+  background:var(--bg-input); border:1px solid var(--border);
+  border-radius:var(--radius-md); padding:12px 14px;
+  color:var(--text-primary); font-family:inherit; font-size:14px;
+  outline:none; transition:border-color var(--transition), box-shadow var(--transition);
+  width:100%;
+}
+.input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-dim); }
+textarea.input { resize:none; min-height:100px; line-height:1.6; }
+
+/* TAG */
+.tag {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:4px 10px; border-radius:99px;
+  font-size:12px; font-weight:500;
+  background:var(--gray-dark); color:var(--text-secondary);
+  border:1px solid var(--border);
+}
+.tag-accent { background:var(--accent-dim); color:var(--accent); border-color:rgba(255,215,0,0.2); }
+.tag-master { background:var(--crimson-dim); color:var(--crimson); border-color:rgba(220,20,60,0.2); }
+
+/* MODAL */
+.modal-overlay {
+  position:fixed; inset:0; z-index:200;
+  background:rgba(0,0,0,0.8); backdrop-filter:blur(8px);
+  display:flex; align-items:flex-end; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity var(--transition);
+}
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal-sheet {
+  background:var(--bg-card); border-radius:var(--radius-xl) var(--radius-xl) 0 0;
+  width:100%; max-height:92dvh; overflow-y:auto;
+  padding:8px 16px 32px;
+  transform:translateY(40px); transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  border-top:1px solid var(--border);
+}
+.modal-overlay.open .modal-sheet { transform:translateY(0); }
+.modal-handle { width:36px; height:4px; background:var(--gray-light); border-radius:99px; margin:8px auto 16px; }
+.modal-title { font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:700; margin-bottom:16px; }
+
+/* TOAST */
+#toast {
+  position:fixed; bottom:calc(var(--nav-h) + 12px + var(--safe-bottom)); left:16px; right:16px; z-index:999;
+  background:var(--bg-elevated); border:1px solid var(--border);
+  border-radius:var(--radius-md); padding:14px 16px;
+  display:flex; align-items:center; gap:10px;
+  opacity:0; transform:translateY(8px); pointer-events:none;
+  transition:all 0.25s cubic-bezier(0.4,0,0.2,1);
+  font-size:14px; font-weight:500;
+  box-shadow:0 8px 32px rgba(0,0,0,0.5);
+}
+#toast.show { opacity:1; transform:translateY(0); pointer-events:all; }
+#toast-icon { font-size:20px; }
+#toast-msg { flex:1; }
+
+/* SETUP SCREEN */
+#setup-screen {
+  position:fixed; inset:0; z-index:300;
+  background:var(--bg-deep);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:32px 24px;
+  gap:24px;
+}
+.setup-logo {
+  font-family:'Space Grotesk',sans-serif; font-weight:800;
+  font-size:36px; letter-spacing:-1px;
+  color:var(--text-primary); text-align:center;
+}
+.setup-logo span { color:var(--gold); }
+.setup-logo small { display:block; font-size:14px; font-weight:400; color:var(--text-muted); letter-spacing:2px; margin-top:4px; }
+.setup-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-xl); padding:24px; width:100%; max-width:400px; }
+.setup-step { font-size:12px; font-weight:600; color:var(--text-muted); letter-spacing:1px; margin-bottom:8px; text-transform:uppercase; }
+.setup-desc { font-size:14px; color:var(--text-secondary); margin-bottom:20px; line-height:1.6; }
+.google-btn {
+  display:flex; align-items:center; justify-content:center; gap:12px;
+  background:#fff; color:#1f1f1f; border:none; border-radius:var(--radius-md);
+  padding:14px 20px; width:100%; font-size:15px; font-weight:600;
+  cursor:pointer; font-family:inherit;
+  transition:all var(--transition);
+}
+.google-btn:active { transform:scale(0.97); opacity:0.9; }
+.google-btn svg { width:20px; height:20px; }
+
+/* LOGIN SCREEN */
+#login-screen {
+  position:fixed; inset:0; z-index:250;
+  background:var(--bg-deep);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:32px 24px; gap:32px;
+}
+
+/* BRAIN HEADER */
+.brain-header {
+  padding:20px 16px 0;
+  display:flex; flex-direction:column; gap:4px;
+}
+.brain-emoji { font-size:36px; line-height:1; }
+.brain-name { font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.5px; }
+.brain-meta { font-size:13px; color:var(--text-muted); }
+
+/* TABS */
+.tab-bar {
+  display:flex; gap:4px; padding:12px 16px;
+  overflow-x:auto; scrollbar-width:none; border-bottom:1px solid var(--border);
+}
+.tab-bar::-webkit-scrollbar { display:none; }
+.tab-btn {
+  display:flex; align-items:center; gap:6px;
+  padding:8px 14px; border-radius:var(--radius-md);
+  border:1px solid transparent; background:transparent;
+  color:var(--text-muted); cursor:pointer; font-family:inherit; font-size:13px; font-weight:500;
+  white-space:nowrap; transition:all var(--transition);
+}
+.tab-btn.active { background:var(--accent-dim); color:var(--accent); border-color:rgba(255,215,0,0.2); }
+.tab-btn .material-icons-round { font-size:16px; }
+
+/* TAB PANELS */
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+
+/* NOTE CARD */
+.note-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:14px; position:relative;
+  transition:all var(--transition);
+}
+.note-card.pinned { border-color:rgba(255,215,0,0.3); }
+.note-card.master { border-color:rgba(220,20,60,0.3); }
+.note-card-header { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:8px; }
+.note-card-badges { display:flex; gap:4px; flex-wrap:wrap; }
+.note-card-actions { display:flex; gap:4px; flex-shrink:0; }
+.icon-btn { background:transparent; border:none; cursor:pointer; color:var(--text-muted); padding:4px; border-radius:6px; transition:all var(--transition); display:flex; }
+.icon-btn:active { color:var(--text-primary); background:var(--gray-dark); }
+.icon-btn .material-icons-round { font-size:18px; }
+.note-card-text { font-size:14px; line-height:1.6; color:var(--text-secondary); white-space:pre-wrap; word-break:break-word; }
+.note-card-text.expanded { max-height:none; }
+.note-card-text.collapsed { max-height:80px; overflow:hidden; }
+.note-card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:10px; }
+.note-tags { display:flex; gap:4px; flex-wrap:wrap; flex:1; }
+.note-date { font-size:11px; color:var(--text-muted); white-space:nowrap; }
+.note-expand-btn { background:transparent; border:none; cursor:pointer; color:var(--accent); font-size:12px; font-weight:600; padding:4px 0; }
+.pin-indicator { position:absolute; top:12px; right:12px; color:var(--gold); font-size:16px; }
+
+/* SEARCH BAR */
+.search-bar {
+  display:flex; align-items:center; gap:8px;
+  background:var(--bg-input); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:10px 14px;
+  margin:0 16px 8px;
+  transition:border-color var(--transition);
+}
+.search-bar:focus-within { border-color:var(--accent); }
+.search-bar .material-icons-round { color:var(--text-muted); font-size:20px; }
+.search-bar input { background:transparent; border:none; outline:none; color:var(--text-primary); font-family:inherit; font-size:14px; flex:1; }
+
+/* FILTER BAR */
+.filter-bar { display:flex; gap:8px; padding:0 16px 12px; overflow-x:auto; scrollbar-width:none; }
+.filter-bar::-webkit-scrollbar { display:none; }
+.filter-chip {
+  display:flex; align-items:center; gap:4px; white-space:nowrap;
+  padding:6px 12px; border-radius:99px; font-size:12px; font-weight:500;
+  border:1px solid var(--border); background:transparent; cursor:pointer;
+  color:var(--text-muted); transition:all var(--transition);
+}
+.filter-chip.active { background:var(--accent-dim); color:var(--accent); border-color:rgba(255,215,0,0.2); }
+
+/* STATS GRID */
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:16px; }
+.stat-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px; }
+.stat-value { font-family:'Space Grotesk',sans-serif; font-size:32px; font-weight:700; color:var(--accent); line-height:1; }
+.stat-label { font-size:12px; color:var(--text-muted); margin-top:4px; }
+.stat-card.wide { grid-column:span 2; }
+.progress-bar { height:8px; background:var(--gray-dark); border-radius:99px; overflow:hidden; margin-top:8px; }
+.progress-fill { height:100%; border-radius:99px; background:linear-gradient(90deg, var(--accent), var(--accent) 70%, rgba(255,215,0,0.3)); transition:width 0.6s cubic-bezier(0.4,0,0.2,1); }
+
+/* CHAT */
+#chat-messages { padding:16px; display:flex; flex-direction:column; gap:12px; }
+.chat-bubble {
+  max-width:88%; padding:12px 14px; border-radius:var(--radius-lg);
+  font-size:14px; line-height:1.6; word-break:break-word;
+}
+.chat-bubble.user {
+  align-self:flex-end; background:var(--accent); color:#0A0A0A;
+  border-bottom-right-radius:4px;
+}
+.chat-bubble.ai {
+  align-self:flex-start; background:var(--bg-elevated); border:1px solid var(--border);
+  color:var(--text-primary); border-bottom-left-radius:4px;
+}
+.chat-bubble.ai .bubble-source { font-size:11px; color:var(--text-muted); margin-top:8px; border-top:1px solid var(--border); padding-top:6px; }
+.chat-bubble.thinking { opacity:0.6; }
+.typing-dots { display:flex; gap:4px; padding:4px 0; }
+.typing-dots span { width:6px; height:6px; border-radius:50%; background:var(--text-muted); animation:bounce 1.2s infinite; }
+.typing-dots span:nth-child(2) { animation-delay:0.2s; }
+.typing-dots span:nth-child(3) { animation-delay:0.4s; }
+@keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+#chat-input-bar {
+  position:sticky; bottom:0; padding:12px 16px;
+  background:rgba(10,10,10,0.95); backdrop-filter:blur(16px);
+  border-top:1px solid var(--border);
+  display:flex; gap:8px; align-items:flex-end;
+}
+#chat-input { flex:1; min-height:44px; max-height:120px; border-radius:var(--radius-md); }
+#chat-send { flex-shrink:0; padding:10px; border-radius:50%; background:var(--accent); border:none; cursor:pointer; color:#0A0A0A; display:flex; transition:all var(--transition); }
+#chat-send:active { transform:scale(0.9); }
+#chat-send .material-icons-round { font-size:22px; }
+
+/* GALLERY */
+.gallery-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:16px; }
+.gallery-item { border-radius:var(--radius-md); overflow:hidden; position:relative; aspect-ratio:1; background:var(--bg-card); border:1px solid var(--border); cursor:pointer; }
+.gallery-item img { width:100%; height:100%; object-fit:cover; }
+.gallery-item-info { position:absolute; bottom:0; left:0; right:0; padding:8px; background:linear-gradient(transparent, rgba(0,0,0,0.8)); }
+.gallery-item-title { font-size:12px; font-weight:600; color:#fff; }
+
+/* ANALYSIS REPORT */
+.analysis-section { margin-bottom:20px; }
+.analysis-section h3 { font-size:15px; font-weight:700; color:var(--accent); margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+.analysis-content { font-size:14px; color:var(--text-secondary); line-height:1.7; white-space:pre-wrap; }
+
+/* SETTINGS */
+.settings-section { padding:16px; border-bottom:1px solid var(--border); }
+.settings-section:last-child { border-bottom:none; }
+.settings-title { font-size:12px; font-weight:600; color:var(--text-muted); letter-spacing:0.8px; text-transform:uppercase; margin-bottom:12px; }
+.settings-row { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border); gap:12px; }
+.settings-row:last-child { border-bottom:none; }
+.settings-row-info { flex:1; }
+.settings-row-label { font-size:14px; font-weight:500; }
+.settings-row-desc { font-size:12px; color:var(--text-muted); margin-top:2px; }
+
+/* VOICE */
+.voice-btn {
+  width:48px; height:48px; border-radius:50%; border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--gray-dark); border:1px solid var(--border);
+  color:var(--text-muted); transition:all var(--transition); flex-shrink:0;
+}
+.voice-btn.recording { background:var(--crimson-dim); border-color:var(--crimson); color:var(--crimson); animation:pulse 1.2s infinite; }
+@keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(220,20,60,0.4)} 50%{box-shadow:0 0 0 8px rgba(220,20,60,0)} }
+.voice-btn .material-icons-round { font-size:22px; }
+
+/* EMPTY STATE */
+.empty-state { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:48px 24px; text-align:center; }
+.empty-state-icon { font-size:48px; opacity:0.3; }
+.empty-state-text { color:var(--text-muted); font-size:14px; }
+
+/* ACTIVITY CHART */
+.activity-chart { display:flex; align-items:flex-end; gap:4px; height:60px; }
+.activity-bar { flex:1; background:var(--gray-dark); border-radius:4px 4px 0 0; min-height:4px; transition:all 0.4s; position:relative; }
+.activity-bar:hover .activity-bar-tooltip { opacity:1; }
+.activity-bar-fill { position:absolute; bottom:0; left:0; right:0; border-radius:4px 4px 0 0; background:var(--accent); opacity:0.7; }
+.activity-labels { display:flex; gap:4px; margin-top:4px; }
+.activity-label { flex:1; text-align:center; font-size:9px; color:var(--text-muted); }
+
+/* ACCENT VARIATIONS */
+.brain-tattoo { --accent:#C084FC; --accent-dim:rgba(192,132,252,0.15); }
+.brain-trading { --accent:#34D399; --accent-dim:rgba(52,211,153,0.15); }
+.brain-ai { --accent:#60A5FA; --accent-dim:rgba(96,165,250,0.15); }
+.brain-custom { --accent:#FFD700; --accent-dim:rgba(255,215,0,0.15); }
+
+/* EXPORT MODAL */
+.export-options { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px; }
+.export-option {
+  background:var(--bg-input); border:1px solid var(--border);
+  border-radius:var(--radius-md); padding:16px 12px; cursor:pointer;
+  display:flex; flex-direction:column; gap:6px; align-items:center; text-align:center;
+  transition:all var(--transition);
+}
+.export-option:active { border-color:var(--accent); background:var(--accent-dim); }
+.export-option-icon { font-size:28px; }
+.export-option-label { font-size:13px; font-weight:600; }
+.export-option-desc { font-size:11px; color:var(--text-muted); }
+
+/* LOADING */
+.loading-spinner {
+  width:32px; height:32px; border-radius:50%;
+  border:3px solid var(--border);
+  border-top-color:var(--accent);
+  animation:spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* DIVIDER */
+.divider { height:1px; background:var(--border); margin:4px 0; }
+
+/* SECTION HEADER */
+.section-header { display:flex; align-items:center; justify-content:space-between; padding:16px 16px 8px; }
+.section-header-title { font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; }
+
+/* TAGS INPUT */
+.tags-input-wrap { display:flex; flex-wrap:wrap; gap:6px; background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius-md); padding:10px 12px; }
+.tags-input-wrap:focus-within { border-color:var(--accent); }
+.tag-pill { display:flex; align-items:center; gap:4px; background:var(--accent-dim); color:var(--accent); border-radius:99px; padding:3px 10px; font-size:12px; font-weight:500; }
+.tag-pill-remove { cursor:pointer; font-size:14px; line-height:1; }
+#tag-input-field { background:transparent; border:none; outline:none; color:var(--text-primary); font-family:inherit; font-size:14px; min-width:80px; flex:1; }
+
+/* TOGGLE */
+.toggle { position:relative; display:inline-block; width:44px; height:24px; }
+.toggle input { opacity:0; width:0; height:0; }
+.toggle-slider { position:absolute; cursor:pointer; inset:0; background:var(--gray-light); border-radius:99px; transition:0.3s; }
+.toggle-slider::before { content:''; position:absolute; height:18px; width:18px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:0.3s; }
+.toggle input:checked + .toggle-slider { background:var(--accent); }
+.toggle input:checked + .toggle-slider::before { transform:translateX(20px); }
+
+/* SWIPE ACTION HINT */
+.notes-list { display:flex; flex-direction:column; gap:10px; padding:0 16px 16px; }
+
+/* New brain modal */
+#new-brain-colors { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+.brain-color-opt {
+  width:36px; height:36px; border-radius:50%; cursor:pointer; border:3px solid transparent;
+  transition:all var(--transition);
+}
+.brain-color-opt.selected { border-color:#fff; transform:scale(1.1); }
+
+/* Animations */
+@keyframes fadeInUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.anim-in { animation:fadeInUp 0.3s ease forwards; }
+
+/* PDF export loading */
+#export-loading { display:none; flex-direction:column; align-items:center; gap:16px; padding:32px; text-align:center; }
+#export-loading.show { display:flex; }
+</style>
+</head>
+<body>
+
+<!-- SETUP SCREEN (first time, no firebase config) -->
+<div id="setup-screen" class="hidden">
+  <div class="setup-logo">NEURAL<span>BRAIN</span><small>SEGUNDO CEREBRO CON IA</small></div>
+  <div class="setup-card">
+    <div class="setup-step">PASO 1 — CONFIGURACIÓN</div>
+    <div class="setup-desc">Ingresa tu configuración de Firebase para guardar tus datos en la nube y sincronizar entre dispositivos.</div>
+    <div class="flex col gap-12">
+      <div class="input-group"><label class="input-label">API Key de Anthropic</label><input class="input" id="setup-anthropic" placeholder="sk-ant-..." autocomplete="off"></div>
+      <div class="input-group"><label class="input-label">Firebase API Key</label><input class="input" id="setup-fb-key" placeholder="AIza..." autocomplete="off"></div>
+      <div class="input-group"><label class="input-label">Firebase Auth Domain</label><input class="input" id="setup-fb-auth" placeholder="tu-proyecto.firebaseapp.com"></div>
+      <div class="input-group"><label class="input-label">Firebase Project ID</label><input class="input" id="setup-fb-project" placeholder="tu-proyecto"></div>
+      <div class="input-group"><label class="input-label">Firebase Storage Bucket</label><input class="input" id="setup-fb-storage" placeholder="tu-proyecto.appspot.com"></div>
+      <div class="input-group"><label class="input-label">Firebase App ID</label><input class="input" id="setup-fb-appid" placeholder="1:xxx:web:xxx"></div>
+      <button class="btn btn-primary w-full" onclick="saveSetup()" style="margin-top:8px">
+        <span class="material-icons-round">rocket_launch</span> Activar Neural Brain
+      </button>
+    </div>
+  </div>
+  <p class="text-sm text-muted" style="text-align:center">Tus claves se guardan solo en tu dispositivo (localStorage)</p>
+</div>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="hidden">
+  <div class="setup-logo">NEURAL<span>BRAIN</span><small>SEGUNDO CEREBRO CON IA</small></div>
+  <div style="width:100%;max-width:340px;display:flex;flex-direction:column;gap:16px">
+    <p class="text-sm" style="text-align:center;color:var(--text-muted)">Inicia sesión para acceder a tus cerebros y mantener todo sincronizado.</p>
+    <button class="google-btn" onclick="signInWithGoogle()">
+      <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Continuar con Google
+    </button>
+    <button class="btn btn-ghost w-full text-sm" onclick="showSetup()">⚙️ Cambiar configuración</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app-main" class="hidden">
+  <!-- TOPBAR -->
+  <div id="topbar">
+    <div id="topbar-left">
+      <div id="topbar-logo">NB<span>.</span></div>
+      <div id="topbar-brain-name" class="text-sm text-muted truncate"></div>
+    </div>
+    <div id="topbar-right">
+      <button class="btn-icon icon-btn" onclick="openExportModal()"><span class="material-icons-round">ios_share</span></button>
+      <button class="btn-icon icon-btn" onclick="openSettings()"><span class="material-icons-round">tune</span></button>
+      <div id="user-avatar" onclick="openUserMenu()"><img id="user-photo" style="display:none" alt=""></div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div id="main-content">
+    <!-- BRAIN VIEW -->
+    <div id="brain-view" class="screen active">
+      <div class="brain-header">
+        <div class="brain-emoji" id="bv-emoji"></div>
+        <div class="brain-name" id="bv-name"></div>
+        <div class="brain-meta" id="bv-meta"></div>
+      </div>
+      <!-- TAB BAR -->
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="notes" onclick="switchBrainTab('notes',this)">
+          <span class="material-icons-round">description</span> Notas
+        </button>
+        <button class="tab-btn" data-tab="chat" onclick="switchBrainTab('chat',this)">
+          <span class="material-icons-round">chat</span> Chat IA
+        </button>
+        <button class="tab-btn" data-tab="gallery" onclick="switchBrainTab('gallery',this)" id="gallery-tab-btn">
+          <span class="material-icons-round">photo_library</span> Galería
+        </button>
+        <button class="tab-btn" data-tab="stats" onclick="switchBrainTab('stats',this)">
+          <span class="material-icons-round">insights</span> Stats
+        </button>
+        <button class="tab-btn" data-tab="analysis" onclick="switchBrainTab('analysis',this)">
+          <span class="material-icons-round">psychology</span> Análisis
+        </button>
+      </div>
+
+      <!-- NOTES TAB -->
+      <div class="tab-panel active" id="tab-notes">
+        <div style="padding:12px 16px 0;display:flex;gap:8px;align-items:center">
+          <div class="search-bar" style="margin:0;flex:1">
+            <span class="material-icons-round">search</span>
+            <input placeholder="Buscar notas..." id="notes-search" oninput="filterNotes()">
+          </div>
+          <button class="voice-btn" id="voice-btn" onclick="toggleVoice()"><span class="material-icons-round">mic</span></button>
+        </div>
+        <div class="filter-bar" id="notes-filters" style="margin-top:8px">
+          <button class="filter-chip active" onclick="setNoteFilter('all',this)">Todas</button>
+          <button class="filter-chip" onclick="setNoteFilter('master',this)">⭐ Maestras</button>
+          <button class="filter-chip" onclick="setNoteFilter('pinned',this)">📌 Fijadas</button>
+        </div>
+        <div class="notes-list" id="notes-list"></div>
+      </div>
+
+      <!-- CHAT TAB -->
+      <div class="tab-panel" id="tab-chat" style="display:flex;flex-direction:column;min-height:calc(100dvh - var(--top-h) - var(--nav-h) - 120px)">
+        <div id="chat-messages" style="flex:1"></div>
+        <div id="chat-input-bar">
+          <textarea class="input" id="chat-input" placeholder="Pregunta algo..." rows="1" oninput="autoResize(this)" onkeydown="chatKeydown(event)"></textarea>
+          <button id="chat-send" onclick="sendChat()"><span class="material-icons-round">send</span></button>
+        </div>
+      </div>
+
+      <!-- GALLERY TAB -->
+      <div class="tab-panel" id="tab-gallery">
+        <div class="section-header">
+          <div class="section-header-title">Referencias Visuales</div>
+          <button class="btn btn-sm btn-ghost" onclick="openAddImage()"><span class="material-icons-round" style="font-size:16px">add_photo_alternate</span> Agregar</button>
+        </div>
+        <div class="gallery-grid" id="gallery-grid"></div>
+        <div class="empty-state hidden" id="gallery-empty">
+          <div class="empty-state-icon">🖼️</div>
+          <div class="font-600">Sin referencias aún</div>
+          <div class="empty-state-text">Agrega imágenes de tatuajes, flash, referencias de estilo o inspiración.</div>
+          <button class="btn btn-primary btn-sm" onclick="openAddImage()">+ Agregar imagen</button>
+        </div>
+      </div>
+
+      <!-- STATS TAB -->
+      <div class="tab-panel" id="tab-stats">
+        <div class="stats-grid" id="stats-grid"></div>
+        <div style="padding:0 16px 16px">
+          <div class="card">
+            <div class="text-sm font-600" style="margin-bottom:12px">Actividad esta semana</div>
+            <div class="activity-chart" id="activity-chart"></div>
+            <div class="activity-labels" id="activity-labels"></div>
+          </div>
+          <div style="height:12px"></div>
+          <div class="card">
+            <div class="text-sm font-600" style="margin-bottom:12px">Tags más usados</div>
+            <div id="top-tags" class="flex" style="flex-wrap:wrap;gap:6px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANALYSIS TAB -->
+      <div class="tab-panel" id="tab-analysis">
+        <div class="section-header">
+          <div class="section-header-title">Análisis IA</div>
+        </div>
+        <div style="padding:0 16px">
+          <p class="text-sm" style="color:var(--text-muted);margin-bottom:16px;line-height:1.6">La IA leerá todas tus notas de este cerebro y generará un diagnóstico de tu conocimiento.</p>
+          <button class="btn btn-primary w-full" id="analyze-btn" onclick="analyzeBrain()">
+            <span class="material-icons-round">psychology</span> Analizar mi cerebro
+          </button>
+          <div style="height:16px"></div>
+          <div id="analysis-result"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS VIEW -->
+    <div id="settings-view" class="screen">
+      <div class="brain-header" style="padding-bottom:16px">
+        <div class="brain-name" style="display:flex;align-items:center;gap:10px">
+          <button class="icon-btn" onclick="closeSettings()"><span class="material-icons-round">arrow_back</span></button>
+          Configuración
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-title">Cuenta</div>
+        <div class="settings-row">
+          <div class="settings-row-info"><div class="settings-row-label" id="settings-username">Usuario</div><div class="settings-row-desc" id="settings-email">email</div></div>
+          <button class="btn btn-sm btn-ghost" onclick="signOut()">Salir</button>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-info"><div class="settings-row-label">Foto de perfil</div></div>
+          <div id="settings-avatar" style="width:36px;height:36px;border-radius:50%;border:2px solid var(--accent);overflow:hidden;background:var(--gray-dark);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent)"></div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-title">API Keys</div>
+        <div class="input-group" style="margin-bottom:12px"><label class="input-label">Anthropic API Key</label><input class="input" id="settings-anthropic" type="password" placeholder="sk-ant-..." autocomplete="off"></div>
+        <button class="btn btn-primary btn-sm" onclick="saveApiKeys()">Guardar claves</button>
+      </div>
+      <div class="settings-section">
+        <div class="settings-title">Cerebros</div>
+        <div id="settings-brains-list"></div>
+        <button class="btn btn-ghost btn-sm w-full" style="margin-top:12px" onclick="openNewBrainModal()">+ Crear cerebro personalizado</button>
+      </div>
+      <div class="settings-section">
+        <div class="settings-title">Datos</div>
+        <div class="settings-row">
+          <div class="settings-row-info"><div class="settings-row-label">Exportar todo</div><div class="settings-row-desc">Descarga todas tus notas en JSON</div></div>
+          <button class="btn btn-sm btn-ghost" onclick="exportAllJSON()">Exportar</button>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-info"><div class="settings-row-label">Borrar chat actual</div><div class="settings-row-desc">Limpia el historial de conversación</div></div>
+          <button class="btn btn-sm btn-danger" onclick="clearChatHistory()">Borrar</button>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-title">Firebase</div>
+        <div class="flex col gap-8">
+          <input class="input" id="settings-fb-key" placeholder="API Key" autocomplete="off">
+          <input class="input" id="settings-fb-auth" placeholder="Auth Domain" autocomplete="off">
+          <input class="input" id="settings-fb-project" placeholder="Project ID" autocomplete="off">
+          <input class="input" id="settings-fb-storage" placeholder="Storage Bucket" autocomplete="off">
+          <input class="input" id="settings-fb-appid" placeholder="App ID" autocomplete="off">
+          <button class="btn btn-ghost btn-sm" onclick="saveFirebaseConfig()">Guardar y reconectar Firebase</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div id="bottom-nav">
+    <div id="nav-brains"></div>
+    <button id="nav-add" onclick="openNewNoteModal()" title="Nueva nota">
+      <span class="material-icons-round">add</span>
+    </button>
+  </div>
+</div>
+
+<!-- MODALS -->
+
+<!-- NEW / EDIT NOTE MODAL -->
+<div class="modal-overlay" id="note-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="note-modal-title">Nueva Nota</div>
+    <div class="flex col gap-12">
+      <div class="input-group">
+        <label class="input-label">Contenido</label>
+        <textarea class="input" id="note-content" rows="6" placeholder="Escribe aquí tu nota..."></textarea>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Tags (Enter para agregar)</label>
+        <div class="tags-input-wrap" id="tags-wrap">
+          <div id="tags-display"></div>
+          <input id="tag-input-field" placeholder="#tag" onkeydown="handleTagInput(event)">
+        </div>
+      </div>
+      <div style="display:flex;gap:16px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="note-master" style="width:18px;height:18px;accent-color:var(--crimson)">
+          <span class="text-sm font-600">⭐ Regla Maestra</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="note-pinned" style="width:18px;height:18px;accent-color:var(--gold)">
+          <span class="text-sm font-600">📌 Fijar nota</span>
+        </label>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button class="btn btn-primary" style="flex:1" onclick="saveNote()">Guardar nota</button>
+        <button class="btn btn-ghost" onclick="closeModal('note-modal')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NEW BRAIN MODAL -->
+<div class="modal-overlay" id="new-brain-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Nuevo Cerebro</div>
+    <div class="flex col gap-12">
+      <div class="input-group"><label class="input-label">Nombre</label><input class="input" id="nb-name" placeholder="Ej: Fotografía, Música..."></div>
+      <div class="input-group"><label class="input-label">Emoji</label><input class="input" id="nb-emoji" placeholder="🧠" maxlength="2" style="font-size:24px;text-align:center"></div>
+      <div class="input-group">
+        <label class="input-label">Color de acento</label>
+        <div id="new-brain-colors">
+          <div class="brain-color-opt selected" style="background:#FFD700" data-color="#FFD700" onclick="selectBrainColor(this)"></div>
+          <div class="brain-color-opt" style="background:#C084FC" data-color="#C084FC" onclick="selectBrainColor(this)"></div>
+          <div class="brain-color-opt" style="background:#34D399" data-color="#34D399" onclick="selectBrainColor(this)"></div>
+          <div class="brain-color-opt" style="background:#60A5FA" data-color="#60A5FA" onclick="selectBrainColor(this)"></div>
+          <div class="brain-color-opt" style="background:#F472B6" data-color="#F472B6" onclick="selectBrainColor(this)"></div>
+          <div class="brain-color-opt" style="background:#FB923C" data-color="#FB923C" onclick="selectBrainColor(this)"></div>
+          <div class="brain-color-opt" style="background:#DC143C" data-color="#DC143C" onclick="selectBrainColor(this)"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button class="btn btn-primary" style="flex:1" onclick="createNewBrain()">Crear cerebro</button>
+        <button class="btn btn-ghost" onclick="closeModal('new-brain-modal')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD IMAGE MODAL -->
+<div class="modal-overlay" id="image-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Agregar Referencia</div>
+    <div class="flex col gap-12">
+      <div class="input-group"><label class="input-label">Imagen</label><input type="file" class="input" id="img-file" accept="image/*" style="padding:10px"></div>
+      <div class="input-group"><label class="input-label">Título</label><input class="input" id="img-title" placeholder="Ej: Flash dragon neo-japonés"></div>
+      <div class="input-group"><label class="input-label">Descripción</label><textarea class="input" id="img-desc" rows="2" placeholder="Notas sobre esta referencia..."></textarea></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary" style="flex:1" onclick="uploadImage()">Subir imagen</button>
+        <button class="btn btn-ghost" onclick="closeModal('image-modal')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="modal-overlay" id="export-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Exportar Cerebro</div>
+    <div id="export-loading">
+      <div class="loading-spinner"></div>
+      <div class="text-sm text-muted">Generando con IA...</div>
+    </div>
+    <div id="export-options-view">
+      <p class="text-sm text-muted" style="margin-bottom:16px">¿Qué quieres exportar del cerebro "<span id="export-brain-name"></span>"?</p>
+      <div class="export-options">
+        <div class="export-option" onclick="exportAISummary()">
+          <div class="export-option-icon">🤖</div>
+          <div class="export-option-label">Resumen IA</div>
+          <div class="export-option-desc">Resumen ejecutivo generado por IA en PDF</div>
+        </div>
+        <div class="export-option" onclick="exportRawTXT()">
+          <div class="export-option-icon">📄</div>
+          <div class="export-option-label">Notas en TXT</div>
+          <div class="export-option-desc">Todas tus notas crudas en texto plano</div>
+        </div>
+        <div class="export-option" onclick="exportRawJSON()">
+          <div class="export-option-icon">🗂️</div>
+          <div class="export-option-label">JSON completo</div>
+          <div class="export-option-desc">Backup estructurado con metadatos</div>
+        </div>
+        <div class="export-option" onclick="exportAIGuide()">
+          <div class="export-option-icon">📚</div>
+          <div class="export-option-label">Guía IA en PDF</div>
+          <div class="export-option-desc">Guía estructurada lista para usar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- IMAGE VIEWER MODAL -->
+<div class="modal-overlay" id="image-viewer-modal">
+  <div class="modal-sheet" style="padding-bottom:24px">
+    <div class="modal-handle"></div>
+    <img id="viewer-img" style="width:100%;border-radius:var(--radius-md);margin-bottom:12px;max-height:50dvh;object-fit:contain">
+    <div class="font-600" id="viewer-title"></div>
+    <div class="text-sm text-muted" id="viewer-desc" style="margin-top:4px"></div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-danger btn-sm" id="viewer-delete" onclick="deleteCurrentImage()">
+        <span class="material-icons-round" style="font-size:16px">delete</span> Eliminar
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('image-viewer-modal')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="confirm-title">Confirmar</div>
+    <p class="text-sm text-muted" id="confirm-msg" style="margin-bottom:20px"></p>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-danger" style="flex:1" id="confirm-ok">Confirmar</button>
+      <button class="btn btn-ghost" onclick="closeModal('confirm-modal')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast">
+  <span class="material-icons-round" id="toast-icon">check_circle</span>
+  <span id="toast-msg"></span>
+</div>
+
+<!-- FIREBASE + APP SCRIPT -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut as fbSignOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot, query, orderBy, serverTimestamp, Timestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
+
+// =================== STATE ===================
+window._state = {
+  user: null,
+  brains: [],
+  currentBrainId: null,
+  notes: [],
+  chatHistory: [],
+  gallery: [],
+  noteFilter: 'all',
+  noteSearch: '',
+  editingNoteId: null,
+  editingTags: [],
+  currentImageId: null,
+  db: null, auth: null, storage: null, app: null,
+  unsubNotes: null, unsubChat: null, unsubGallery: null,
+};
+const S = window._state;
+
+// =================== FIREBASE INIT ===================
+function getFBConfig() {
+  return {
+    apiKey: localStorage.getItem('nb_fb_key') || '',
+    authDomain: localStorage.getItem('nb_fb_auth') || '',
+    projectId: localStorage.getItem('nb_fb_project') || '',
+    storageBucket: localStorage.getItem('nb_fb_storage') || '',
+    messagingSenderId: localStorage.getItem('nb_fb_sender') || '',
+    appId: localStorage.getItem('nb_fb_appid') || '',
+  };
+}
+
+function isConfigured() {
+  const c = getFBConfig();
+  return c.apiKey && c.authDomain && c.projectId;
+}
+
+async function initFirebase() {
+  if (!isConfigured()) { showSetup(); return; }
+  try {
+    if (S.app) { /* already init */ }
+    else {
+      S.app = initializeApp(getFBConfig());
+      S.auth = getAuth(S.app);
+      S.db = getFirestore(S.app);
+      S.storage = getStorage(S.app);
+    }
+    // check redirect result
+    try {
+      const result = await getRedirectResult(S.auth);
+      if (result?.user) { handleUser(result.user); return; }
+    } catch(e) {}
+    onAuthStateChanged(S.auth, (user) => {
+      if (user) handleUser(user);
+      else showLogin();
+    });
+  } catch(e) { showToast('Error Firebase: ' + e.message, 'error'); showLogin(); }
+}
+
+window.showSetup = function() {
+  document.getElementById('setup-screen').classList.remove('hidden');
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('app-main').classList.add('hidden');
+  loadSetupFields();
+}
+function showLogin() {
+  document.getElementById('setup-screen').classList.add('hidden');
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('app-main').classList.add('hidden');
+}
+function showApp() {
+  document.getElementById('setup-screen').classList.add('hidden');
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('app-main').classList.remove('hidden');
+}
+
+window.saveSetup = function() {
+  const get = id => document.getElementById(id).value.trim();
+  const key = get('setup-anthropic');
+  const fbKey = get('setup-fb-key');
+  const fbAuth = get('setup-fb-auth');
+  const fbProject = get('setup-fb-project');
+  const fbStorage = get('setup-fb-storage');
+  const fbAppId = get('setup-fb-appid');
+  if (!fbKey || !fbAuth || !fbProject) { showToast('Completa los campos de Firebase', 'error'); return; }
+  if (key) localStorage.setItem('nb_anthropic', key);
+  localStorage.setItem('nb_fb_key', fbKey);
+  localStorage.setItem('nb_fb_auth', fbAuth);
+  localStorage.setItem('nb_fb_project', fbProject);
+  localStorage.setItem('nb_fb_storage', fbStorage);
+  localStorage.setItem('nb_fb_appid', fbAppId);
+  showToast('Configuración guardada', 'success');
+  setTimeout(() => location.reload(), 800);
+}
+
+function loadSetupFields() {
+  const set = (id, key) => { const el = document.getElementById(id); if(el) el.value = localStorage.getItem(key) || ''; };
+  set('setup-anthropic','nb_anthropic');
+  set('setup-fb-key','nb_fb_key');
+  set('setup-fb-auth','nb_fb_auth');
+  set('setup-fb-project','nb_fb_project');
+  set('setup-fb-storage','nb_fb_storage');
+  set('setup-fb-appid','nb_fb_appid');
+}
+
+// =================== AUTH ===================
+window.signInWithGoogle = async function() {
+  if (!S.auth) { showToast('Firebase no inicializado', 'error'); return; }
+  const provider = new GoogleAuthProvider();
+  try {
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /iPad|iPhone|MacIntel/.test(navigator.platform));
+    if (isSafari) { await signInWithRedirect(S.auth, provider); }
+    else { const result = await signInWithPopup(S.auth, provider); handleUser(result.user); }
+  } catch(e) { showToast('Error al iniciar sesión: ' + e.message, 'error'); }
+}
+
+window.signOut = async function() {
+  await fbSignOut(S.auth);
+  S.user = null;
+  showLogin();
+}
+
+async function handleUser(user) {
+  S.user = user;
+  updateAvatar(user);
+  document.getElementById('settings-username').textContent = user.displayName || 'Usuario';
+  document.getElementById('settings-email').textContent = user.email || '';
+  showApp();
+  await initBrains();
+}
+
+function updateAvatar(user) {
+  const av = document.getElementById('user-avatar');
+  const img = document.getElementById('user-photo');
+  const sa = document.getElementById('settings-avatar');
+  if (user.photoURL) {
+    img.src = user.photoURL; img.style.display = 'block';
+    av.innerHTML = ''; av.appendChild(img);
+    if (sa) { sa.innerHTML = `<img src="${user.photoURL}" style="width:100%;height:100%;object-fit:cover">`; }
+  } else {
+    const init = (user.displayName || user.email || 'U')[0].toUpperCase();
+    av.textContent = init;
+    if (sa) sa.textContent = init;
+  }
+}
+
+// =================== BRAINS ===================
+const DEFAULT_BRAINS = [
+  { id: 'tattoo', name: 'Tatuaje', emoji: '🎨', color: '#C084FC', hasGallery: true },
+  { id: 'trading', name: 'Trading', emoji: '📈', color: '#34D399', hasGallery: false },
+  { id: 'ai', name: 'IA & Tech', emoji: '🤖', color: '#60A5FA', hasGallery: false },
+];
+
+async function initBrains() {
+  // Load custom brains from Firestore
+  const customRef = collection(S.db, `users/${S.user.uid}/brainsMeta`);
+  const snap = await getDocs(customRef);
+  const custom = [];
+  snap.forEach(d => custom.push({ ...d.data(), id: d.id }));
+  S.brains = [...DEFAULT_BRAINS, ...custom];
+  renderNav();
+  // activate first brain
+  const saved = localStorage.getItem('nb_current_brain');
+  const found = S.brains.find(b => b.id === saved);
+  activateBrain(found ? found.id : S.brains[0].id);
+}
+
+function renderNav() {
+  const nav = document.getElementById('nav-brains');
+  nav.innerHTML = S.brains.map(b => `
+    <button class="nav-item ${b.id === S.currentBrainId ? 'active' : ''}" data-brain="${b.id}" onclick="activateBrain('${b.id}')">
+      <span class="nav-icon">${b.emoji}</span>
+      <span class="nav-label">${b.name}</span>
+    </button>
+  `).join('');
+}
+
+window.activateBrain = function(id) {
+  const brain = S.brains.find(b => b.id === id);
+  if (!brain) return;
+  S.currentBrainId = id;
+  localStorage.setItem('nb_current_brain', id);
+  // unsubscribe previous
+  if (S.unsubNotes) S.unsubNotes();
+  if (S.unsubChat) S.unsubChat();
+  if (S.unsubGallery) S.unsubGallery();
+  // set accent
+  document.documentElement.style.setProperty('--accent', brain.color);
+  const dim = hexToRgba(brain.color, 0.15);
+  document.documentElement.style.setProperty('--accent-dim', dim);
+  // update topbar
+  document.getElementById('topbar-brain-name').textContent = `${brain.emoji} ${brain.name}`;
+  document.getElementById('bv-emoji').textContent = brain.emoji;
+  document.getElementById('bv-name').textContent = brain.name;
+  // gallery tab visibility
+  document.getElementById('gallery-tab-btn').style.display = brain.hasGallery ? 'flex' : 'none';
+  // update nav
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.brain === id));
+  // switch to notes tab
+  switchBrainTab('notes', document.querySelector('.tab-btn[data-tab="notes"]'));
+  // load data
+  loadNotes();
+  loadChatHistory();
+  if (brain.hasGallery) loadGallery();
+  else { S.gallery = []; }
+  loadStats();
+  showScreen('brain-view');
+}
+
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+window.openNewBrainModal = function() { closeModal('note-modal'); openModal('new-brain-modal'); }
+window.selectBrainColor = function(el) {
+  document.querySelectorAll('.brain-color-opt').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+window.createNewBrain = async function() {
+  const name = document.getElementById('nb-name').value.trim();
+  const emoji = document.getElementById('nb-emoji').value.trim() || '🧠';
+  const colorEl = document.querySelector('.brain-color-opt.selected');
+  const color = colorEl ? colorEl.dataset.color : '#FFD700';
+  if (!name) { showToast('Pon un nombre al cerebro', 'error'); return; }
+  const id = 'custom_' + Date.now();
+  const brain = { id, name, emoji, color, hasGallery: false, createdAt: Date.now() };
+  await setDoc(doc(S.db, `users/${S.user.uid}/brainsMeta/${id}`), brain);
+  S.brains.push(brain);
+  renderNav();
+  closeModal('new-brain-modal');
+  activateBrain(id);
+  showToast(`Cerebro "${name}" creado`, 'success');
+}
+
+// =================== NOTES ===================
+function getNotesPath() { return `users/${S.user.uid}/brains/${S.currentBrainId}/notes`; }
+
+function loadNotes() {
+  S.notes = [];
+  const q = query(collection(S.db, getNotesPath()), orderBy('createdAt','desc'));
+  S.unsubNotes = onSnapshot(q, snap => {
+    S.notes = [];
+    snap.forEach(d => S.notes.push({ id: d.id, ...d.data() }));
+    renderNotes();
+    loadStats();
+  }, () => {
+    // offline: load from localStorage
+    const cached = localStorage.getItem(`nb_notes_${S.currentBrainId}`);
+    if (cached) { S.notes = JSON.parse(cached); renderNotes(); }
+  });
+}
+
+function renderNotes() {
+  const list = document.getElementById('notes-list');
+  let notes = [...S.notes];
+  // cache
+  localStorage.setItem(`nb_notes_${S.currentBrainId}`, JSON.stringify(notes));
+  // filter
+  const search = (document.getElementById('notes-search').value || '').toLowerCase();
+  if (search) notes = notes.filter(n => n.content?.toLowerCase().includes(search) || n.tags?.some(t => t.toLowerCase().includes(search)));
+  if (S.noteFilter === 'master') notes = notes.filter(n => n.isMaster);
+  if (S.noteFilter === 'pinned') notes = notes.filter(n => n.isPinned);
+  // sort pinned first
+  notes.sort((a,b) => { if(a.isPinned && !b.isPinned) return -1; if(!a.isPinned && b.isPinned) return 1; return (b.createdAt?.seconds || b.createdAt || 0) - (a.createdAt?.seconds || a.createdAt || 0); });
+  if (notes.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📝</div><div class="font-600">Sin notas aún</div><div class="empty-state-text">Agrega tu primera nota con el botón +</div></div>`;
+    return;
+  }
+  list.innerHTML = notes.map(note => noteCard(note)).join('');
+}
+
+function noteCard(note) {
+  const date = formatDate(note.createdAt);
+  const tags = (note.tags || []).map(t => `<span class="tag text-xs">#${t}</span>`).join('');
+  const masterBadge = note.isMaster ? `<span class="tag tag-master text-xs">⭐ Maestra</span>` : '';
+  const content = note.content || '';
+  const isLong = content.length > 200;
+  return `
+  <div class="note-card ${note.isPinned ? 'pinned' : ''} ${note.isMaster ? 'master' : ''} anim-in">
+    ${note.isPinned ? `<span class="material-icons-round" style="position:absolute;top:12px;right:12px;font-size:16px;color:var(--gold)">push_pin</span>` : ''}
+    <div class="note-card-header">
+      <div class="note-card-badges">${masterBadge}</div>
+      <div class="note-card-actions" style="${note.isPinned ? 'margin-right:24px' : ''}">
+        <button class="icon-btn" onclick="togglePin('${note.id}')" title="${note.isPinned ? 'Desfijar' : 'Fijar'}"><span class="material-icons-round" style="font-size:16px">${note.isPinned ? 'push_pin' : 'push_pin'}</span></button>
+        <button class="icon-btn" onclick="editNote('${note.id}')"><span class="material-icons-round" style="font-size:16px">edit</span></button>
+        <button class="icon-btn" onclick="confirmDeleteNote('${note.id}')"><span class="material-icons-round" style="font-size:16px">delete</span></button>
+      </div>
+    </div>
+    <div class="note-card-text ${isLong ? 'collapsed' : ''}" id="note-text-${note.id}">${escapeHtml(content)}</div>
+    ${isLong ? `<button class="note-expand-btn" onclick="toggleExpand('${note.id}', this)">Ver más</button>` : ''}
+    <div class="note-card-footer">
+      <div class="note-tags">${tags}</div>
+      <div class="note-date">${date}</div>
+    </div>
+  </div>`;
+}
+
+window.toggleExpand = function(id, btn) {
+  const el = document.getElementById('note-text-' + id);
+  const isCollapsed = el.classList.contains('collapsed');
+  el.classList.toggle('collapsed', !isCollapsed);
+  el.classList.toggle('expanded', isCollapsed);
+  btn.textContent = isCollapsed ? 'Ver menos' : 'Ver más';
+}
+
+window.filterNotes = function() { renderNotes(); }
+window.setNoteFilter = function(f, el) {
+  S.noteFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderNotes();
+}
+
+// Note CRUD
+window.openNewNoteModal = function() {
+  S.editingNoteId = null;
+  S.editingTags = [];
+  document.getElementById('note-content').value = '';
+  document.getElementById('note-master').checked = false;
+  document.getElementById('note-pinned').checked = false;
+  document.getElementById('note-modal-title').textContent = 'Nueva Nota';
+  renderTagsDisplay();
+  openModal('note-modal');
+  setTimeout(() => document.getElementById('note-content').focus(), 300);
+}
+
+window.editNote = function(id) {
+  const note = S.notes.find(n => n.id === id);
+  if (!note) return;
+  S.editingNoteId = id;
+  S.editingTags = [...(note.tags || [])];
+  document.getElementById('note-content').value = note.content || '';
+  document.getElementById('note-master').checked = !!note.isMaster;
+  document.getElementById('note-pinned').checked = !!note.isPinned;
+  document.getElementById('note-modal-title').textContent = 'Editar Nota';
+  renderTagsDisplay();
+  openModal('note-modal');
+}
+
+window.saveNote = async function() {
+  const content = document.getElementById('note-content').value.trim();
+  if (!content) { showToast('La nota no puede estar vacía', 'error'); return; }
+  const isMaster = document.getElementById('note-master').checked;
+  const isPinned = document.getElementById('note-pinned').checked;
+  const tags = S.editingTags;
+  const id = S.editingNoteId || doc(collection(S.db, getNotesPath())).id;
+  const data = { content, tags, isMaster, isPinned, updatedAt: serverTimestamp(), createdAt: S.editingNoteId ? (S.notes.find(n => n.id === id)?.createdAt || serverTimestamp()) : serverTimestamp() };
+  await setDoc(doc(S.db, getNotesPath(), id), data, { merge: true });
+  closeModal('note-modal');
+  showToast(S.editingNoteId ? 'Nota actualizada' : 'Nota guardada', 'success');
+}
+
+window.togglePin = async function(id) {
+  const note = S.notes.find(n => n.id === id);
+  if (!note) return;
+  await setDoc(doc(S.db, getNotesPath(), id), { isPinned: !note.isPinned }, { merge: true });
+}
+
+window.confirmDeleteNote = function(id) {
+  openConfirm('Eliminar nota', '¿Seguro que quieres eliminar esta nota? Esta acción no se puede deshacer.', async () => {
+    await deleteDoc(doc(S.db, getNotesPath(), id));
+    showToast('Nota eliminada', 'success');
+  });
+}
+
+// Tags
+window.handleTagInput = function(e) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = document.getElementById('tag-input-field').value.trim().replace(/^#/,'');
+    if (val && !S.editingTags.includes(val)) {
+      S.editingTags.push(val);
+      renderTagsDisplay();
+    }
+    document.getElementById('tag-input-field').value = '';
+  } else if (e.key === 'Backspace' && !document.getElementById('tag-input-field').value) {
+    S.editingTags.pop();
+    renderTagsDisplay();
+  }
+}
+function renderTagsDisplay() {
+  document.getElementById('tags-display').innerHTML = S.editingTags.map((t,i) => `<span class="tag-pill">#${t}<span class="tag-pill-remove" onclick="removeTag(${i})">×</span></span>`).join('');
+}
+window.removeTag = function(i) { S.editingTags.splice(i,1); renderTagsDisplay(); }
+
+// =================== VOICE ===================
+let mediaRecognition = null;
+window.toggleVoice = function() {
+  const btn = document.getElementById('voice-btn');
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    showToast('Tu navegador no soporta reconocimiento de voz', 'error'); return;
+  }
+  if (mediaRecognition) {
+    mediaRecognition.stop(); mediaRecognition = null;
+    btn.classList.remove('recording'); return;
+  }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  mediaRecognition = new SR();
+  mediaRecognition.lang = 'es-MX';
+  mediaRecognition.continuous = false;
+  mediaRecognition.interimResults = false;
+  mediaRecognition.onresult = async (e) => {
+    const text = e.results[0][0].transcript;
+    const id = doc(collection(S.db, getNotesPath())).id;
+    await setDoc(doc(S.db, getNotesPath(), id), { content: text, tags: ['#voz'], isMaster: false, isPinned: false, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+    showToast('Nota de voz guardada', 'success');
+  };
+  mediaRecognition.onerror = () => { btn.classList.remove('recording'); mediaRecognition = null; };
+  mediaRecognition.onend = () => { btn.classList.remove('recording'); mediaRecognition = null; };
+  mediaRecognition.start();
+  btn.classList.add('recording');
+}
+
+// =================== CHAT ===================
+function getChatPath() { return `users/${S.user.uid}/brains/${S.currentBrainId}/chat`; }
+
+function loadChatHistory() {
+  S.chatHistory = [];
+  const q = query(collection(S.db, getChatPath()), orderBy('ts','asc'));
+  S.unsubChat = onSnapshot(q, snap => {
+    S.chatHistory = [];
+    snap.forEach(d => S.chatHistory.push({ id: d.id, ...d.data() }));
+    renderChat();
+  }, () => {
+    const cached = localStorage.getItem(`nb_chat_${S.currentBrainId}`);
+    if (cached) { S.chatHistory = JSON.parse(cached); renderChat(); }
+  });
+}
+
+function renderChat() {
+  const container = document.getElementById('chat-messages');
+  if (!container) return;
+  localStorage.setItem(`nb_chat_${S.currentBrainId}`, JSON.stringify(S.chatHistory));
+  if (S.chatHistory.length === 0) {
+    const brain = S.brains.find(b => b.id === S.currentBrainId);
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">${brain?.emoji || '🧠'}</div><div class="font-600">Chat de ${brain?.name || 'Cerebro'}</div><div class="empty-state-text">La IA responde usando ÚNICAMENTE tus notas de este cerebro como contexto.</div></div>`;
+    return;
+  }
+  container.innerHTML = S.chatHistory.map(m => {
+    if (m.role === 'user') return `<div class="chat-bubble user">${escapeHtml(m.content)}</div>`;
+    return `<div class="chat-bubble ai">${formatAIMessage(m.content)}${m.source ? `<div class="bubble-source">📚 ${escapeHtml(m.source)}</div>` : ''}</div>`;
+  }).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+window.chatKeydown = function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+window.autoResize = function(el) {
+  el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+window.sendChat = async function() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const apiKey = localStorage.getItem('nb_anthropic');
+  if (!apiKey) { showToast('Agrega tu Anthropic API Key en Configuración', 'error'); return; }
+  input.value = ''; input.style.height = 'auto';
+  // save user message
+  const userMsgId = doc(collection(S.db, getChatPath())).id;
+  await setDoc(doc(S.db, getChatPath(), userMsgId), { role:'user', content:text, ts:serverTimestamp() });
+  // show typing
+  const container = document.getElementById('chat-messages');
+  const typingEl = document.createElement('div');
+  typingEl.className = 'chat-bubble ai thinking';
+  typingEl.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  container.appendChild(typingEl);
+  container.scrollTop = container.scrollHeight;
+  // build context
+  const masters = S.notes.filter(n => n.isMaster).map(n => n.content).join('\n\n---\n\n');
+  const rest = S.notes.filter(n => !n.isMaster).map(n => `[${(n.tags||[]).map(t=>'#'+t).join(',')}] ${n.content}`).join('\n\n---\n\n');
+  const brain = S.brains.find(b => b.id === S.currentBrainId);
+  const systemPrompt = `Eres el asistente personal de conocimiento del cerebro "${brain?.name || 'Cerebro'}". Responde ÚNICAMENTE basándote en las notas del usuario que se proveen a continuación. Si la respuesta no está en las notas, dilo claramente. Al final de tu respuesta, indica brevemente de qué nota o sección tomaste la información con el prefijo "Fuente:".
+
+${masters ? `=== REGLAS MAESTRAS ===\n${masters}\n\n` : ''}=== NOTAS DEL CEREBRO ===\n${rest || '(Sin notas aún)'}`;
+  const history = S.chatHistory.filter(m => m.role === 'user' || m.role === 'assistant').slice(-10).map(m => ({ role: m.role === 'ai' ? 'assistant' : m.role, content: m.content }));
+  history.push({ role:'user', content: text });
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'x-api-key':apiKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+      body:JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:1000, system:systemPrompt, messages:history })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'Error en la respuesta';
+    // extract source
+    let source = ''; let content = reply;
+    const srcMatch = reply.match(/Fuente:\s*(.+)$/m);
+    if (srcMatch) { source = srcMatch[1]; content = reply.replace(srcMatch[0],'').trim(); }
+    typingEl.remove();
+    const aiMsgId = doc(collection(S.db, getChatPath())).id;
+    await setDoc(doc(S.db, getChatPath(), aiMsgId), { role:'ai', content, source, ts:serverTimestamp() });
+  } catch(e) {
+    typingEl.remove();
+    showToast('Error al contactar la IA: ' + e.message, 'error');
+  }
+}
+
+window.clearChatHistory = async function() {
+  openConfirm('Borrar historial', '¿Seguro que quieres borrar todo el historial de este chat?', async () => {
+    const q = query(collection(S.db, getChatPath()));
+    const snap = await getDocs(q);
+    const dels = snap.docs.map(d => deleteDoc(d.ref));
+    await Promise.all(dels);
+    showToast('Historial borrado', 'success');
+  });
+}
+
+// =================== GALLERY ===================
+function getGalleryPath() { return `users/${S.user.uid}/brains/${S.currentBrainId}/gallery`; }
+
+function loadGallery() {
+  const q = query(collection(S.db, getGalleryPath()), orderBy('createdAt','desc'));
+  S.unsubGallery = onSnapshot(q, snap => {
+    S.gallery = [];
+    snap.forEach(d => S.gallery.push({ id: d.id, ...d.data() }));
+    renderGallery();
+  }, () => {});
+}
+
+function renderGallery() {
+  const grid = document.getElementById('gallery-grid');
+  const empty = document.getElementById('gallery-empty');
+  if (S.gallery.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  grid.innerHTML = S.gallery.map(img => `
+    <div class="gallery-item" onclick="viewImage('${img.id}')">
+      <img src="${img.url}" alt="${escapeHtml(img.title || '')}">
+      <div class="gallery-item-info"><div class="gallery-item-title">${escapeHtml(img.title || '')}</div></div>
+    </div>
+  `).join('');
+}
+
+window.openAddImage = function() { openModal('image-modal'); }
+window.uploadImage = async function() {
+  const file = document.getElementById('img-file').files[0];
+  const title = document.getElementById('img-title').value.trim();
+  const desc = document.getElementById('img-desc').value.trim();
+  if (!file) { showToast('Selecciona una imagen', 'error'); return; }
+  if (!S.storage) { showToast('Firebase Storage no disponible', 'error'); return; }
+  showToast('Subiendo imagen...', 'info');
+  const path = `users/${S.user.uid}/gallery/${Date.now()}_${file.name}`;
+  const ref = storageRef(S.storage, path);
+  const snap = await uploadBytes(ref, file);
+  const url = await getDownloadURL(snap.ref);
+  const id = doc(collection(S.db, getGalleryPath())).id;
+  await setDoc(doc(S.db, getGalleryPath(), id), { url, title, desc, path, createdAt: serverTimestamp() });
+  closeModal('image-modal');
+  showToast('Imagen subida', 'success');
+}
+
+window.viewImage = function(id) {
+  const img = S.gallery.find(i => i.id === id);
+  if (!img) return;
+  S.currentImageId = id;
+  document.getElementById('viewer-img').src = img.url;
+  document.getElementById('viewer-title').textContent = img.title || '';
+  document.getElementById('viewer-desc').textContent = img.desc || '';
+  openModal('image-viewer-modal');
+}
+
+window.deleteCurrentImage = async function() {
+  const img = S.gallery.find(i => i.id === S.currentImageId);
+  if (!img) return;
+  openConfirm('Eliminar imagen', '¿Eliminar esta referencia?', async () => {
+    if (img.path && S.storage) { try { await deleteObject(storageRef(S.storage, img.path)); } catch(e) {} }
+    await deleteDoc(doc(S.db, getGalleryPath(), S.currentImageId));
+    closeModal('image-viewer-modal');
+    showToast('Imagen eliminada', 'success');
+  });
+}
+
+// =================== STATS ===================
+function loadStats() {
+  const panel = document.getElementById('tab-stats');
+  if (!panel) return;
+  const notes = S.notes;
+  const total = notes.length;
+  const masters = notes.filter(n => n.isMaster).length;
+  const lastNote = notes[0];
+  const lastDate = lastNote ? formatDate(lastNote.createdAt) : 'Nunca';
+  // tag frequency
+  const tagFreq = {};
+  notes.forEach(n => (n.tags||[]).forEach(t => { tagFreq[t] = (tagFreq[t]||0) + 1; }));
+  const topTags = Object.entries(tagFreq).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  // training level (0-100)
+  const variety = Object.keys(tagFreq).length;
+  const level = Math.min(100, Math.round((total * 3 + variety * 5 + masters * 10) / 2));
+  // activity (last 7 days)
+  const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const now = new Date();
+  const weekData = Array(7).fill(0);
+  notes.forEach(n => {
+    const ts = n.createdAt?.seconds ? new Date(n.createdAt.seconds*1000) : new Date(n.createdAt || 0);
+    const diff = Math.floor((now - ts) / 86400000);
+    if (diff < 7) weekData[6 - diff]++;
+  });
+  const maxDay = Math.max(...weekData, 1);
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card"><div class="stat-value">${total}</div><div class="stat-label">Notas totales</div></div>
+    <div class="stat-card"><div class="stat-value">${masters}</div><div class="stat-label">Reglas Maestras</div></div>
+    <div class="stat-card"><div class="stat-value">${Object.keys(tagFreq).length}</div><div class="stat-label">Tags únicos</div></div>
+    <div class="stat-card"><div class="stat-value text-sm" style="font-size:14px">${lastDate}</div><div class="stat-label">Última nota</div></div>
+    <div class="stat-card wide">
+      <div class="flex justify-between items-center" style="margin-bottom:8px">
+        <div class="text-sm font-600">Nivel de entrenamiento</div>
+        <div class="text-sm text-gold font-700">${level}%</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${level}%"></div></div>
+    </div>
+  `;
+  // activity
+  const chartEl = document.getElementById('activity-chart');
+  const labelsEl = document.getElementById('activity-labels');
+  chartEl.innerHTML = weekData.map((v,i) => `
+    <div class="activity-bar" style="height:60px;position:relative">
+      <div class="activity-bar-fill" style="height:${Math.round((v/maxDay)*100)}%"></div>
+    </div>
+  `).join('');
+  const startDay = now.getDay();
+  labelsEl.innerHTML = Array(7).fill(0).map((_,i) => {
+    const d = (startDay - (6-i) + 7) % 7;
+    return `<div class="activity-label">${days[d]}</div>`;
+  }).join('');
+  // top tags
+  document.getElementById('top-tags').innerHTML = topTags.map(([t,c]) => `<span class="tag"><span class="text-gold">#${t}</span> <span class="text-muted">${c}</span></span>`).join('');
+}
+
+// =================== ANALYSIS ===================
+window.analyzeBrain = async function() {
+  const apiKey = localStorage.getItem('nb_anthropic');
+  if (!apiKey) { showToast('Agrega tu Anthropic API Key', 'error'); return; }
+  if (S.notes.length < 2) { showToast('Agrega al menos 2 notas para analizar', 'error'); return; }
+  const btn = document.getElementById('analyze-btn');
+  const result = document.getElementById('analysis-result');
+  btn.disabled = true; btn.innerHTML = '<div class="loading-spinner" style="width:20px;height:20px;border-width:2px"></div> Analizando...';
+  result.innerHTML = '';
+  const brain = S.brains.find(b => b.id === S.currentBrainId);
+  const notesText = S.notes.map(n => `[${(n.tags||[]).map(t=>'#'+t).join(' ')}]${n.isMaster?'[MAESTRA]':''}\n${n.content}`).join('\n\n---\n\n');
+  const prompt = `Analiza las siguientes notas del cerebro "${brain?.name}" y genera un reporte estructurado con estas secciones exactas:
+
+1. PATRONES DE CONOCIMIENTO: ¿Qué patrones, temas recurrentes o marcos mentales detectas?
+2. ÁREAS FALTANTES: ¿Qué aspectos importantes de ${brain?.name} NO están documentados?
+3. CONTRADICCIONES: ¿Hay ideas contradictorias o puntos débiles en el conocimiento?
+4. RECOMENDACIONES: 3-5 acciones concretas para enriquecer este cerebro.
+5. FORTALEZAS: ¿En qué es especialmente sólido este cerebro de conocimiento?
+
+Notas:\n\n${notesText}`;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'x-api-key':apiKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+      body:JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:2000, messages:[{ role:'user', content:prompt }] })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '';
+    renderAnalysis(text);
+  } catch(e) { showToast('Error en análisis: ' + e.message, 'error'); }
+  btn.disabled = false; btn.innerHTML = '<span class="material-icons-round">psychology</span> Analizar de nuevo';
+}
+
+function renderAnalysis(text) {
+  const sections = [
+    { key:'PATRONES', icon:'pattern', title:'Patrones de Conocimiento' },
+    { key:'ÁREAS FALTANTES', icon:'explore', title:'Áreas Faltantes' },
+    { key:'CONTRADICCIONES', icon:'warning', title:'Contradicciones y Puntos Débiles' },
+    { key:'RECOMENDACIONES', icon:'tips_and_updates', title:'Recomendaciones' },
+    { key:'FORTALEZAS', icon:'star', title:'Fortalezas' },
+  ];
+  let html = '';
+  sections.forEach(s => {
+    const regex = new RegExp(`${s.key}[^:]*:?\\s*([\\s\\S]*?)(?=\\n\\d+\\.|$)`, 'i');
+    const match = text.match(regex);
+    if (match) {
+      html += `<div class="analysis-section card" style="margin-bottom:12px">
+        <h3><span class="material-icons-round" style="font-size:18px">${s.icon}</span>${s.title}</h3>
+        <div class="analysis-content">${escapeHtml(match[1].trim())}</div>
+      </div>`;
+    }
+  });
+  if (!html) html = `<div class="card"><div class="analysis-content">${escapeHtml(text)}</div></div>`;
+  document.getElementById('analysis-result').innerHTML = html;
+}
+
+// =================== EXPORT ===================
+window.openExportModal = function() {
+  const brain = S.brains.find(b => b.id === S.currentBrainId);
+  document.getElementById('export-brain-name').textContent = brain?.name || '';
+  document.getElementById('export-options-view').style.display = 'block';
+  document.getElementById('export-loading').classList.remove('show');
+  openModal('export-modal');
+}
+
+window.exportRawTXT = function() {
+  const brain = S.brains.find(b => b.id === S.currentBrainId);
+  const text = S.notes.map(n => `[${formatDate(n.createdAt)}]${n.isMaster?' [MAESTRA]':''}${n.isPinned?' [FIJADA]':''}\nTags: ${(n.tags||[]).map(t=>'#'+t).join(', ')}\n\n${n.content}\n\n${'─'.repeat(40)}`).join('\n\n');
+  downloadFile(`${brain?.name || 'cerebro'}_notas.txt`, text, 'text/plain');
+  closeModal('export-modal');
+}
+
+window.exportRawJSON = function() {
+  const brain = S.brains.find(b => b.id === S.currentBrainId);
+  const data = { brain: brain?.name, exportedAt: new Date().toISOString(), notes: S.notes };
+  downloadFile(`${brain?.name || 'cerebro'}_backup.json`, JSON.stringify(data, null, 2), 'application/json');
+  closeModal('export-modal');
+}
+
+window.exportAllJSON = function() {
+  const data = { exportedAt: new Date().toISOString(), brains: S.brains.map(b => ({ ...b, notes: S.notes })) };
+  downloadFile('neural_brain_backup.json', JSON.stringify(data, null, 2), 'application/json');
+}
+
+window.exportAISummary = async function() { await generateAIPDF('summary'); }
+window.exportAIGuide = async function() { await generateAIPDF('guide'); }
+
+async function generateAIPDF(type) {
+  const apiKey = localStorage.getItem('nb_anthropic');
+  if (!apiKey) { showToast('Agrega tu Anthropic API Key', 'error'); return; }
+  document.getElementById('export-options-view').style.display = 'none';
+  document.getElementById('export-loading').classList.add('show');
+  const brain = S.brains.find(b => b.id === S.currentBrainId);
+  const notesText = S.notes.map(n => `${n.isMaster?'[MAESTRA] ':''}${n.content}`).join('\n\n---\n\n');
+  const prompt = type === 'summary'
+    ? `Genera un resumen ejecutivo profesional de todo el conocimiento acumulado en el cerebro "${brain?.name}". Estructura: 1) Resumen general, 2) Conceptos clave, 3) Conclusiones principales, 4) Puntos de acción.\n\nNotas:\n${notesText}`
+    : `Genera una guía estructurada y completa lista para usar, basada en el conocimiento del cerebro "${brain?.name}". Incluye: tabla de contenidos, secciones temáticas, ejemplos prácticos, y referencias cruzadas.\n\nNotas:\n${notesText}`;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'x-api-key':apiKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+      body:JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:3000, messages:[{ role:'user', content:prompt }] })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '';
+    generatePDFFromText(text, brain?.name || 'Cerebro', type);
+  } catch(e) { showToast('Error generando PDF: ' + e.message, 'error'); }
+  document.getElementById('export-loading').classList.remove('show');
+  closeModal('export-modal');
+}
+
+function generatePDFFromText(text, brainName, type) {
+  const title = type === 'summary' ? `Resumen Ejecutivo — ${brainName}` : `Guía Completa — ${brainName}`;
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title>
+  <style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 32px;color:#1a1a1a;line-height:1.7}
+  h1{font-size:28px;border-bottom:3px solid #FFD700;padding-bottom:12px;margin-bottom:8px}
+  .meta{color:#666;margin-bottom:32px;font-size:14px}
+  h2{font-size:20px;margin-top:32px;color:#111}
+  h3{font-size:16px;color:#333}
+  p{margin:12px 0}
+  pre{background:#f5f5f5;padding:16px;border-radius:8px;white-space:pre-wrap;font-family:monospace;font-size:13px}
+  @media print{body{margin:20px}}</style>
+  </head><body>
+  <h1>🧠 ${title}</h1>
+  <div class="meta">Neural Brain · Exportado el ${new Date().toLocaleDateString('es-MX', {dateStyle:'long'})} · ${S.notes.length} notas</div>
+  <div>${text.split('\n').map(l => l.startsWith('# ') ? `<h2>${l.slice(2)}</h2>` : l.startsWith('## ') ? `<h3>${l.slice(3)}</h3>` : l.trim() ? `<p>${l}</p>` : '<br>').join('')}</div>
+  </body></html>`;
+  const blob = new Blob([html], { type:'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `${brainName}_${type}.html`; a.click();
+  URL.revokeObjectURL(url);
+  showToast('Documento generado y descargado', 'success');
+}
+
+// =================== SETTINGS ===================
+window.openSettings = function() {
+  // fill fields
+  document.getElementById('settings-anthropic').value = localStorage.getItem('nb_anthropic') || '';
+  document.getElementById('settings-fb-key').value = localStorage.getItem('nb_fb_key') || '';
+  document.getElementById('settings-fb-auth').value = localStorage.getItem('nb_fb_auth') || '';
+  document.getElementById('settings-fb-project').value = localStorage.getItem('nb_fb_project') || '';
+  document.getElementById('settings-fb-storage').value = localStorage.getItem('nb_fb_storage') || '';
+  document.getElementById('settings-fb-appid').value = localStorage.getItem('nb_fb_appid') || '';
+  // brains list
+  document.getElementById('settings-brains-list').innerHTML = S.brains.map(b => `
+    <div class="settings-row">
+      <div class="settings-row-info" style="display:flex;align-items:center;gap:8px">
+        <span>${b.emoji}</span>
+        <div><div class="settings-row-label">${b.name}</div><div class="settings-row-desc" style="color:${b.color}">${b.color}</div></div>
+      </div>
+      ${b.id.startsWith('custom_') ? `<button class="btn btn-sm btn-danger" onclick="deleteBrain('${b.id}')">Borrar</button>` : ''}
+    </div>
+  `).join('');
+  updateAvatar(S.user);
+  showScreen('settings-view');
+}
+window.closeSettings = function() { showScreen('brain-view'); }
+window.saveApiKeys = function() {
+  localStorage.setItem('nb_anthropic', document.getElementById('settings-anthropic').value.trim());
+  showToast('API Key guardada', 'success');
+}
+window.saveFirebaseConfig = function() {
+  localStorage.setItem('nb_fb_key', document.getElementById('settings-fb-key').value.trim());
+  localStorage.setItem('nb_fb_auth', document.getElementById('settings-fb-auth').value.trim());
+  localStorage.setItem('nb_fb_project', document.getElementById('settings-fb-project').value.trim());
+  localStorage.setItem('nb_fb_storage', document.getElementById('settings-fb-storage').value.trim());
+  localStorage.setItem('nb_fb_appid', document.getElementById('settings-fb-appid').value.trim());
+  showToast('Configuración guardada. Recargando...', 'success');
+  setTimeout(() => location.reload(), 1000);
+}
+window.deleteBrain = async function(id) {
+  openConfirm('Eliminar cerebro', '¿Seguro? Esto elimina también todas sus notas.', async () => {
+    // delete all notes
+    const notesSnap = await getDocs(collection(S.db, `users/${S.user.uid}/brains/${id}/notes`));
+    await Promise.all(notesSnap.docs.map(d => deleteDoc(d.ref)));
+    await deleteDoc(doc(S.db, `users/${S.user.uid}/brainsMeta/${id}`));
+    S.brains = S.brains.filter(b => b.id !== id);
+    renderNav();
+    if (S.currentBrainId === id) activateBrain(S.brains[0].id);
+    showToast('Cerebro eliminado', 'success');
+    openSettings();
+  });
+}
+window.openUserMenu = function() { openSettings(); }
+
+// =================== UI HELPERS ===================
+window.switchBrainTab = function(tab, el) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
+  if (el) el.classList.add('active');
+  const panel = document.getElementById('tab-' + tab);
+  if (panel) { panel.classList.add('active'); panel.style.display = 'block'; }
+  if (tab === 'stats') loadStats();
+  if (tab === 'gallery') renderGallery();
+  if (tab === 'chat') { renderChat(); }
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+}
+
+window.openModal = function(id) {
+  document.getElementById(id)?.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+window.closeModal = function(id) {
+  document.getElementById(id)?.classList.remove('open');
+  document.body.style.overflow = '';
+}
+// close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); });
+});
+
+let confirmCallback = null;
+window.openConfirm = function(title, msg, cb) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-msg').textContent = msg;
+  confirmCallback = cb;
+  openModal('confirm-modal');
+}
+document.getElementById('confirm-ok').onclick = async function() {
+  closeModal('confirm-modal');
+  if (confirmCallback) { await confirmCallback(); confirmCallback = null; }
+}
+
+let toastTimeout;
+window.showToast = function(msg, type='success') {
+  const el = document.getElementById('toast');
+  const icon = document.getElementById('toast-icon');
+  const msgEl = document.getElementById('toast-msg');
+  const icons = { success:'check_circle', error:'error', info:'info' };
+  const colors = { success:'var(--gold)', error:'var(--crimson)', info:'var(--accent)' };
+  icon.textContent = icons[type] || 'info';
+  icon.style.color = colors[type] || 'var(--accent)';
+  msgEl.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+function downloadFile(name, content, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function escapeHtml(text) {
+  return String(text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function formatAIMessage(text) {
+  return escapeHtml(text).replace(/\n/g,'<br>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>');
+}
+
+function formatDate(ts) {
+  if (!ts) return '';
+  const d = ts.seconds ? new Date(ts.seconds * 1000) : new Date(ts);
+  if (isNaN(d)) return '';
+  const now = new Date();
+  const diff = now - d;
+  if (diff < 60000) return 'Ahora mismo';
+  if (diff < 3600000) return `Hace ${Math.floor(diff/60000)} min`;
+  if (diff < 86400000) return `Hace ${Math.floor(diff/3600000)} h`;
+  if (diff < 604800000) return `Hace ${Math.floor(diff/86400000)} días`;
+  return d.toLocaleDateString('es-MX', { day:'numeric', month:'short', year:'numeric' });
+}
+
+// =================== PWA ===================
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+
+// =================== BOOT ===================
+initFirebase();
+</script>
+
+<!-- MANIFEST INLINE (register as blob) -->
+<script>
+// Inline manifest since we're single file
+const manifest = {
+  name: "Neural Brain",
+  short_name: "NeuralBrain",
+  description: "Segundo Cerebro Personal con IA",
+  start_url: "./",
+  display: "standalone",
+  background_color: "#0A0A0A",
+  theme_color: "#0A0A0A",
+  orientation: "portrait",
+  icons: [
+    { src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%230A0A0A'/><text y='140' font-size='120' text-anchor='middle' x='96'>🧠</text></svg>", sizes: "192x192", type: "image/svg+xml" },
+    { src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%230A0A0A'/><text y='380' font-size='320' text-anchor='middle' x='256'>🧠</text></svg>", sizes: "512x512", type: "image/svg+xml" }
+  ],
+  shortcuts: [
+    { name: "Nueva Nota", url: "./?action=new-note", icons: [{ src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><text y='76' font-size='76'>📝</text></svg>", sizes: "96x96" }] }
+  ]
+};
+const blob = new Blob([JSON.stringify(manifest)], { type:'application/manifest+json' });
+const link = document.createElement('link');
+link.rel = 'manifest'; link.href = URL.createObjectURL(blob);
+document.head.appendChild(link);
+
+// Apple touch icon
+const appleIcon = document.createElement('link');
+appleIcon.rel = 'apple-touch-icon';
+appleIcon.href = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%230A0A0A'/><text y='130' font-size='100' text-anchor='middle' x='90'>🧠</text></svg>";
+document.head.appendChild(appleIcon);
+</script>
+</body>
+</html>
